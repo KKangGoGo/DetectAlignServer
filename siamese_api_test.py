@@ -1,3 +1,6 @@
+import os
+
+import boto3
 import torchvision
 import torchvision.datasets as dset
 import torchvision.transforms as transforms
@@ -17,14 +20,10 @@ from PIL import Image
 from flask import Flask, request
 import json
 import io
+import s3_connection as s3_con
+import config as cf
+import requests
 
-
-class Config():
-    # find =_src, comapare_src와 경로 맞춰야 함
-    training_dir = ".\images1\Training"
-    testing_dir = ".\images1\Testing"
-    path = "./siamese_cnn_model_cpu.pt"
-    get_fine_key = "file_url"
 
 class SiameseNetwork(nn.Module):
     def __init__(self):
@@ -66,20 +65,22 @@ class SiameseNetwork(nn.Module):
         output2 = self.forward_once(input2)
         return output1, output2
 
-class GetTwoData(Dataset):
-    def __init__(self, image_tuple, compare_img, imageFolderDataset, transform=None, should_invert=True):
+
+class ConvertImageData(Dataset):
+    def __init__(self, image_tuple, compare_tuple, imageFolderDataset, transform=None, should_invert=True):
         self.imageFolderDataset = imageFolderDataset
         self.transform = transform
         self.should_invert = should_invert
         self.image_tuple = image_tuple
-        self.compare_img = compare_img
+        self.compare_tuple = compare_tuple
 
     def __getitem__(self, index):
         img0_tuple = self.image_tuple
-        img1_tuple = self.compare_img
+        img1_tuple = self.compare_tuple
 
+        # img1_tuple[0]는 url 정보임
         img0 = Image.open(img0_tuple[0])
-        img1 = Image.open(img1_tuple[0])
+        img1 = Image.open(requests.get(img1_tuple[0], stream=True).raw)
         img0 = img0.convert("L")
         img1 = img1.convert("L")
 
@@ -96,7 +97,9 @@ class GetTwoData(Dataset):
     def __len__(self):
         return len(self.imageFolderDataset.imgs)
 
+
 app = Flask(__name__)
+
 
 @app.route('/')
 def hello_world():
@@ -105,17 +108,21 @@ def hello_world():
 
 @app.route('/photo', methods=['POST'])
 def photo():
-    img_byte = request.files[Config.get_fine_key].read()
+    img_byte = request.files[cf.GET_KEY].read()
+    print(type(request.files[cf.GET_KEY]))
+    print(type(img_byte))
     data_io = io.BytesIO(img_byte)
     img = Image.open(data_io)
     img_type = str(type(img))
 
     return img_type
 
+
 def get_image():
-    img_byte = request.files[Config.get_fine_key].read()
+    img_byte = request.files[cf.GET_KEY].read()
     data_io = io.BytesIO(img_byte)
     return data_io
+
 
 @app.route('/siamese', methods=['POST'])
 def siamese():
@@ -124,23 +131,21 @@ def siamese():
     # spring server로 부터 받은 이미지를 튜플로 전환
     image_tuple = (get_image(), 0)
 
+    get_images = s3_con.get_s3_images()
+
     # 테스트 이미지 파일에서 이미지 가져오기
-    folder_dataset_test = dset.ImageFolder(root=Config.testing_dir)
+    folder_dataset_test = dset.ImageFolder(root=cf.TESTING)
 
     # 비교할 이미지 개수 만큼 반복해 비교할 이미지와 1:1 비교할 수 있도록 함
-    for i in range(1, len(folder_dataset_test) + 1):
-        compare_src = ".\images1\Testing\s" + str((i)) + '\\' + str((i)) + ".jpg"
-        compare_test = dset.ImageFolder(root=Config.testing_dir)
-        for value in compare_test.imgs:
-            if (value[0] == compare_src):
-                compare_tuple = value
-                break
+    for url in get_images:
+        compare_src = url
+        compare_tuple = (compare_src, 0)
 
-        siamese_dataset = GetTwoData(image_tuple, compare_tuple, imageFolderDataset=folder_dataset_test,
-                                     transform=transforms.Compose([transforms.Resize((100, 100)),
-                                                                   transforms.ToTensor()
-                                                                   ])
-                                     , should_invert=False)
+        siamese_dataset = ConvertImageData(image_tuple, compare_tuple, imageFolderDataset=folder_dataset_test,
+                                           transform=transforms.Compose([transforms.Resize((100, 100)),
+                                                                         transforms.ToTensor()
+                                                                         ])
+                                           , should_invert=False)
 
         test_dataloader = DataLoader(siamese_dataset, num_workers=0, batch_size=1, shuffle=True)
         dataiter = iter(test_dataloader)
@@ -166,6 +171,7 @@ def siamese():
     json_result = json.dumps(dict_)
     return json_result
 
+
 if __name__ == "__main__":
-    model = torch.load(Config.path)
+    model = torch.load(cf.MODEL_PATH)
     app.run(debug=False, host="127.0.0.1", port=5000)
