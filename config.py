@@ -20,4 +20,3 @@ AWS_S3_BUCKET_REGION = os.getenv("AWS_S3_BUCKET_REGION")
 
 # AWS S3 서버에서 받아올 이미지 위치
 GET_S3_IMAGE_URL = f"https://{AWS_S3_BUCKET_NAME}.s3.{AWS_S3_BUCKET_REGION}.amazonaws.com/"
-
