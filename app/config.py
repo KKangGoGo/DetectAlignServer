@@ -1,8 +1,8 @@
 import os
 
-TRAINING = ".\images1\Training"
-TESTING = ".\images1\Testing"
-MODEL_PATH = "./siamese_cnn_model_cpu.pt"
+TRAINING = "images1/Training"
+TESTING = "images1/Testing"
+MODEL_PATH = "siamese_cnn_model_cpu.pt"
 
 # spring 서버에서 받아올 이미지 키 값
 GET_KEY = "file_url"

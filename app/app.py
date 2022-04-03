@@ -165,4 +165,5 @@ def siamese():
 
 if __name__ == "__main__":
     model = torch.load(cf.MODEL_PATH)
+    print('model?')
     app.run(debug=False, host="127.0.0.1", port=5000)
