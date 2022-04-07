@@ -1,2 +1,11 @@
-
 siamese_cnn_model_cpu.pt
+
+.idea
+
+__pycache__/
+
+__pycache__/*
+
+__pycache__/*.pyc
+
+*.pyc
