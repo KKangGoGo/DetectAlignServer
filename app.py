@@ -6,6 +6,7 @@ import json
 import io
 import s3_connection as s3_con
 import config as cf
+import base64
 
 from torch.utils.data import DataLoader
 from torch.autograd import Variable
@@ -28,6 +29,11 @@ def response(result_dict):
     dict_ = dict(sorted_result)
     # dictionary를 json으로 변환
     return json.dumps(dict_)
+
+
+@app.route('/check')
+def check():
+    return 'OK'
 
 
 @app.route('/siamese', methods=['POST'])
