@@ -1,11 +1,7 @@
 import os
 
-TRAINING = "images1/Training"
-TESTING = "images1/Testing"
-MODEL_PATH = "siamese_cnn_model_cpu.pt"
-
-# spring 서버에서 받아올 이미지 키 값
-GET_KEY = "file_url"
+TMP_IMAGES = "./images1/Testing"
+MODEL_PATH = "./siamese_cnn_model_cpu.pt"
 
 # 회원가입시 저장될 사용자의 사진 위치
 USERS_IMAGE_PREFIX = "users/"
