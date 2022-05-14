@@ -6,12 +6,11 @@ import json
 import io
 import s3_connection as s3_con
 import config as cf
-import base64
 
 from torch.utils.data import DataLoader
 from torch.autograd import Variable
 from flask import Flask, request
-from siamese import SiameseNetwork # 필수
+from siamese import SiameseNetwork # 필수!
 from convert_image import ConvertImageData
 
 app = Flask(__name__)
@@ -33,6 +32,7 @@ def response(result_dict):
 
 @app.route('/check')
 def check():
+    print("check 시작")
     return 'OK'
 
 
@@ -75,4 +75,4 @@ def siamese():
 
 if __name__ == "__main__":
     model = torch.load(cf.MODEL_PATH)
-    app.run(debug=False, host="127.0.0.1", port=5050)
+    app.run(debug=False, host="127.0.0.1", port=5888, threaded=True)
