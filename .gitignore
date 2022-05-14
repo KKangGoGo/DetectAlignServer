@@ -1,6 +1,12 @@
 siamese_cnn_model_cpu.pt
 
 .idea
+.idea/*
+
+app/.idea
+app/.idea/*
+app/.idea/__pycache__
+app/.idea/__pycache__*
 
 __pycache__/
 
@@ -9,3 +15,4 @@ __pycache__/*
 __pycache__/*.pyc
 
 *.pyc
+app/siamese_cnn_model.pt
