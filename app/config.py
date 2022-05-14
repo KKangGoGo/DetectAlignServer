@@ -1,7 +1,7 @@
 import os
 
 TMP_IMAGES = "./images1/Testing"
-MODEL_PATH = "./model/model.pt"
+MODEL_PATH = "./siamese_cnn_model.pt"
 
 # 회원가입시 저장될 사용자의 사진 위치
 USERS_IMAGE_PREFIX = "users/"
