@@ -7,6 +7,7 @@ import io
 import s3_connection as s3_con
 import config as cf
 import base64
+import os
 
 from torch.utils.data import DataLoader
 from torch.autograd import Variable
@@ -47,7 +48,8 @@ def siamese():
     get_images = s3_con.get_s3_images()
 
     # 테스트 이미지 파일에서 이미지 가져오기
-    folder_dataset_test = dset.ImageFolder(root=cf.TMP_IMAGES)
+    dir = os.path.dirname(os.path.realpath(__file__)).replace('\\', '/') + '/'
+    folder_dataset_test = dset.ImageFolder(root=dir + cf.TMP_IMAGES)
 
     # 비교할 이미지 개수 만큼 반복해 비교할 이미지와 1:1 비교할 수 있도록 함
     for url in get_images:
@@ -74,9 +76,7 @@ def siamese():
 
 
 if __name__ == "__main__":
-    print('----')
-    print(cf.MODEL_PATH)
-    print('----')
-    model = torch.load(cf.MODEL_PATH)
+    dir = os.path.dirname(os.path.realpath(__file__)).replace('\\', '/') + '/'
+    model = torch.load(dir+cf.MODEL_PATH)
     # model.eval()
     app.run(debug=False, host="127.0.0.1", port=5000, threaded=True)
