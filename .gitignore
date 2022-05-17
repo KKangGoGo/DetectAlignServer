@@ -16,3 +16,5 @@ __pycache__/*.pyc
 
 *.pyc
 app/siamese_cnn_model.pt
+
+env_file
