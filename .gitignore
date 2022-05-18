@@ -16,3 +16,4 @@ __pycache__/*.pyc
 
 *.pyc
 app/siamese_cnn_model.pt
+app/siamese_cnn_model_dict_cpu.pt

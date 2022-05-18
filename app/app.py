@@ -122,7 +122,8 @@ def siamese():
 
 
 if __name__ == "__main__":
+    model = SiameseNetwork()
     dir = os.path.dirname(os.path.realpath(__file__)).replace('\\', '/') + '/'
-    model = torch.load(dir + cf.MODEL_PATH)
-    # model.eval()
+    model.load_state_dict(torch.load(dir + cf.MODEL_PATH))
+    model.eval()
     app.run(debug=False, host="127.0.0.1", port=5000, threaded=True)
