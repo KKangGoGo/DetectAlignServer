@@ -8,10 +8,11 @@ import s3_connection as s3_con
 import config as cf
 import base64
 import os
+import numpy as np
 
 from torch.utils.data import DataLoader
 from torch.autograd import Variable
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from siamese import SiameseNetwork  # 필수
 from convert_image import ConvertImageData
 
@@ -36,22 +37,21 @@ siamese -> mq2
 '''
 
 
+def request_body_to_json():
+    to_str = bytes.decode(request.data)
+    return json.loads(to_str)
+
+
 def get_album_id():
-    data = str(request.form['data'])
-    data_to_json = json.loads(data)
-    return data_to_json['album_id']
+    return request_body_to_json()['album_id']
 
 
 def get_original_image_url():
-    data = str(request.form['data'])
-    data_to_json = json.loads(data)
-    return data_to_json['original_image_url']
+    return request_body_to_json()['original_image_url']
 
 
 def get_file_image():
-    img_byte = request.files['file_image'].read()
-    data_io = io.BytesIO(img_byte)
-    return data_io
+    return request_body_to_json()['file_image']
 
 
 def make_response(album_id, person_url, person_username, rate, original_image_url):
@@ -71,8 +71,8 @@ def response(result_dict):
     # dict_ = dict(sorted_result)
 
     album_id = get_album_id()
-    person_url = sorted_result[0][0] # 넘어온 사진과 가장 비슷한 사용자
-    rate = sorted_result[0][1] # 비슷한 정도
+    person_url = sorted_result[0][0]  # 넘어온 사진과 가장 비슷한 사용자
+    rate = sorted_result[0][1]  # 비슷한 정도
     person_username = person_url.split('/')[4]
     original_image_url = get_original_image_url()
     return json.dumps(make_response(album_id, person_url, person_username, rate, original_image_url))

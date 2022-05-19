@@ -19,7 +19,7 @@ class ConvertImageData(Dataset):
         img1_tuple = self.compare_tuple
 
         # img1_tuple[0]는 url 정보임
-        img0 = Image.open(img0_tuple[0])
+        img0 = Image.open(requests.get(img0_tuple[0], stream=True).raw)
         img1 = Image.open(requests.get(img1_tuple[0], stream=True).raw)
         img0 = img0.convert("L")
         img1 = img1.convert("L")
