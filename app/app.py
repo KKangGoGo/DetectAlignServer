@@ -36,7 +36,7 @@ siamese -> mq2
 }
 '''
 
-
+# 전달받은 request를 json으로 변환
 def request_body_to_json():
     to_str = bytes.decode(request.data)
     return json.loads(to_str)
@@ -81,6 +81,11 @@ def response(result_dict):
 @app.route('/check')
 def check():
     return 'OK'
+
+
+@app.route('/health_check')
+def health_check() -> Response:
+    return jsonify("OK")
 
 
 @app.route('/siamese', methods=['POST'])
