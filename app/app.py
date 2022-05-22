@@ -91,6 +91,10 @@ def health_check() -> Response:
 @app.route('/siamese', methods=['POST'])
 def siamese():
     print("Siamese 시작")
+    model = SiameseNetwork()
+    dir = os.path.dirname(os.path.realpath(__file__)).replace('\\', '/') + '/'
+    model.load_state_dict(torch.load(dir + cf.MODEL_PATH), strict=False)
+    model.eval()
     result_dict = dict()
 
     # spring server로 부터 받은 이미지를 튜플로 전환
@@ -127,8 +131,4 @@ def siamese():
 
 
 if __name__ == "__main__":
-    model = SiameseNetwork()
-    dir = os.path.dirname(os.path.realpath(__file__)).replace('\\', '/') + '/'
-    model.load_state_dict(torch.load(dir + cf.MODEL_PATH))
-    model.eval()
     app.run(debug=False, host="127.0.0.1", port=5000, threaded=True)
