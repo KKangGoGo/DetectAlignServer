@@ -24,5 +24,9 @@ def get_s3_images():
 
     result = list()
     for content in content_list:
-        result.append(cf.GET_S3_IMAGE_URL + content.get('Key'))
+        path = content.get('Key').endswith('/')
+        if path:
+            continue
+        else:
+            result.append(cf.GET_S3_IMAGE_URL + content.get('Key'))
     return result
