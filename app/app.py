@@ -83,18 +83,13 @@ def check():
     return 'OK'
 
 
-@app.route('/health_check')
-def health_check() -> Response:
-    return jsonify("OK")
-
-
 @app.route('/siamese', methods=['POST'])
 def siamese():
-    print("Siamese 시작")
+    device = torch.device('cpu')
     model = SiameseNetwork()
     dir = os.path.dirname(os.path.realpath(__file__)).replace('\\', '/') + '/'
-    model.load_state_dict(torch.load(dir + cf.MODEL_PATH), strict=False)
-    model.eval()
+    model.load_state_dict(torch.load(dir + cf.MODEL_PATH, map_location=device))
+    # model.eval()
     result_dict = dict()
 
     # spring server로 부터 받은 이미지를 튜플로 전환
