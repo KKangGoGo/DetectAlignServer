@@ -4,7 +4,7 @@ TMP_IMAGES = "/images1/Testing"
 MODEL_PATH = "/siamese_cnn_model_dict_cpu.pt"
 
 # 회원가입시 저장될 사용자의 사진 위치
-USERS_IMAGE_PREFIX = "users/"
+USERS_IMAGE_PREFIX = ""
 
 # AWS S3 연결 정보
 # 환경 변수로 값 불러오기 위해 필요한 라이브러리

@@ -87,8 +87,8 @@ def check():
 def siamese():
     device = torch.device('cpu')
     model = SiameseNetwork()
-    dir = os.path.dirname(os.path.realpath(__file__)).replace('\\', '/') + '/'
-    model.load_state_dict(torch.load(dir + cf.MODEL_PATH, map_location=device))
+    direc = os.path.dirname(os.path.realpath(__file__)).replace('\\', '/') + '/'
+    model.load_state_dict(torch.load(direc + cf.MODEL_PATH, map_location=device))
     # model.eval()
     result_dict = dict()
 
@@ -98,11 +98,11 @@ def siamese():
     get_images = s3_con.get_s3_images()
 
     # 테스트 이미지 파일에서 이미지 가져오기
-    dir = os.path.dirname(os.path.realpath(__file__)).replace('\\', '/') + '/'
-    folder_dataset_test = dset.ImageFolder(root=dir + cf.TMP_IMAGES)
+    folder_dataset_test = dset.ImageFolder(root=direc + cf.TMP_IMAGES)
 
     # 비교할 이미지 개수 만큼 반복해 비교할 이미지와 1:1 비교할 수 있도록 함
     for url in get_images:
+        print(url)
         compare_src = url
         compare_tuple = (compare_src, 0)
 

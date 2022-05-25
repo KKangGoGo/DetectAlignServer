@@ -19,8 +19,8 @@ def get_s3_images():
      값을 추출하되, 첫 번째는 파일이 아닌 폴더 경로가 들어가기 때문에 제거
      무슨말인지 모르겠으면 content_list.pop(0)을 제거 및 출력해서 비교하면 됨
     '''
+
     content_list = obj_list['Contents']
-    content_list.pop(0)
 
     result = list()
     for content in content_list:
